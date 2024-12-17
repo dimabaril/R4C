@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %} Robots List {% endblock %}
+{% block content %}
+    <h1>Robots List</h1>
+    {% if robots %}
+        <ul>
+            {% for robot in robots %}
+            <li>Model: {{ robot.model }}, Version: {{ robot.version }}, Created: {{ robot.created }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>There are no robots.</p>
+    {% endif %}
+{% endblock %}
