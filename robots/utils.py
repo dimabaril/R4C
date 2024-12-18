@@ -1,5 +1,6 @@
 import datetime
 
+from django.db.models import Count
 from openpyxl import Workbook
 
 from robots.models import Robot
@@ -11,26 +12,25 @@ def generate_robot_production_summary(
 ) -> Workbook:
     workbook = Workbook()
 
-    all_models = Robot.objects.values_list("model", flat=True).distinct()
+    data = (
+        Robot.objects.filter(created__gte=from_time, created__lte=to_time)
+        .values("model", "version")
+        .annotate(count=Count("id"))
+        .order_by("model", "version")
+    )
 
-    for model in all_models:
-        worksheet = workbook.create_sheet(title=model)
-        worksheet.append(["Модель", "Версия", "Количество за неделю"])
+    current_model = None
+    for entry in data:
+        model = entry["model"]
+        version = entry["version"]
+        count = entry["count"]
 
-        all_versions = (
-            Robot.objects.filter(model=model)
-            .values_list("version", flat=True)
-            .distinct()
-        )
+        if model != current_model:
+            worksheet = workbook.create_sheet(title=model)
+            worksheet.append(["Модель", "Версия", "Количество за неделю"])
+            current_model = model
 
-        for version in all_versions:
-            count = Robot.objects.filter(
-                model=model,
-                version=version,
-                created__gte=from_time,
-                created__lte=to_time,
-            ).count()
-            worksheet.append([model, version, count])
+        worksheet.append([model, version, count])
 
     # Delete default empty sheet
     if "Sheet" in workbook.sheetnames:
