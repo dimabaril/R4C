@@ -18,7 +18,10 @@ def create_robot(request):
         form = RobotForm(data)
 
         if form.is_valid():
-            form.save()
+            robot = form.save(commit=False)
+            serial = f'{data["model"]}-{data["version"]}'
+            robot.serial = serial
+            robot.save()
             return JsonResponse(
                 {"status": "success", "message": "Robot created successfully!"},
                 status=HTTPStatus.CREATED,
