@@ -19,18 +19,23 @@ def generate_robot_production_summary(
         .order_by("model", "version")
     )
 
-    current_model = None
-    for entry in data:
-        model = entry["model"]
-        version = entry["version"]
-        count = entry["count"]
+    if data:
+        current_model = None
+        for entry in data:
+            model = entry["model"]
+            version = entry["version"]
+            count = entry["count"]
 
-        if model != current_model:
-            worksheet = workbook.create_sheet(title=model)
-            worksheet.append(["Модель", "Версия", "Количество за неделю"])
-            current_model = model
+            if model != current_model:
+                worksheet = workbook.create_sheet(title=model)
+                worksheet.append(["Модель", "Версия", "Количество за неделю"])
+                current_model = model
 
-        worksheet.append([model, version, count])
+            worksheet.append([model, version, count])
+    else:
+        worksheet = workbook.create_sheet(title="Have no robots")
+        worksheet.append(["Модель", "Версия", "Количество за неделю"])
+        worksheet.append(["-", "-", "-"])
 
     # Delete default empty sheet
     if "Sheet" in workbook.sheetnames:
