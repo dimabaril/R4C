@@ -6,10 +6,8 @@ from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
-from django.views.generic import DetailView, ListView
 
 from robots.forms import RobotForm
-from robots.models import Robot
 from robots.utils import generate_robot_production_summary
 
 
@@ -39,18 +37,6 @@ def create_robot(request):
             {"status": "error", "message": "Invalid JSON format"},
             status=HTTPStatus.BAD_REQUEST,
         )
-
-
-class RobotListView(ListView):
-    model = Robot
-    template_name = "robots/robots_list.html"
-    context_object_name = "robots"
-
-
-class RobotDetailView(DetailView):
-    model = Robot
-    template_name = "robots/robot_detail.html"
-    context_object_name = "robot"
 
 
 @require_http_methods(["GET"])
