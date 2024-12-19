@@ -1,0 +1,9 @@
+
+{% extends "base.html" %}
+{% block title %} Robot Detail {% endblock %}
+{% block content %}
+    <h1>Robot Detail</h1>
+    <div>
+        Model: {{ robot.model }}, Version: {{ robot.version }}, Created: {{ robot.created }}
+    </div>
+{% endblock %}
